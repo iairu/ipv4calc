@@ -17,6 +17,13 @@ int p(int zaklad, int exponent) {
     return vysledok;
 }
 
+// pauza pred zatvorenim a informovanie pouzivatela
+void _exit(int code) {
+    printf("\n\nStlac akukolvek klavesu pre zatvorenie ...");
+    getchar();
+    exit(code);
+}
+
 int main() {
     int oktet[4] = {0};
     int maska[4] = {0};
@@ -32,18 +39,20 @@ int main() {
     printf("Zadaj IPv4 a masku (vo formate max. 255.255.255.255/32):\n");
     if (scanf("%d.%d.%d.%d/%d",&oktet[0],&oktet[1],&oktet[2],&oktet[3],&maska_) < 5) {
         printf("FATAL: Zle formatovany vstup\n");
-        exit(0);
+        fflush(stdin); // vyhodi ENTER z bufferu ak chyba
+        _exit(0);
     }
+    fflush(stdin); // vyhodi ENTER z bufferu ak nebola chyba
 
     // kontrola vstupu
     if(maska_>32 || maska_ < 0) {
         printf("FATAL: Zle zadana maska (nad 32)\n");
-        exit(0);
+        _exit(0);
     }
     for(i=0;i<4;i++) {
         if(oktet[i]>255 || oktet[i] < 0) {
             printf("FATAL: Zle zadana adresa (oktet nad 255)\n");
-            exit(0);
+            _exit(0);
         }
     }
 
@@ -94,5 +103,6 @@ int main() {
 
     printf("> Pocet pripojitelnych zariadeni:\t %lu",max);
 
+    _exit(0);
     return 0;
 }

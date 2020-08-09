@@ -17,6 +17,13 @@ int p(int base, int exponent) {
     return result;
 }
 
+// pause before exiting & inform user
+void _exit(int code) {
+    printf("\n\nPress any key to exit...");
+    getchar();
+    exit(code);
+}
+
 int main() {
     int octet[4] = {0};
     int mask[4] = {0};
@@ -32,18 +39,20 @@ int main() {
     printf("Input IPv4 and mask (format max. 255.255.255.255/32):\n");
     if (scanf("%d.%d.%d.%d/%d",&octet[0],&octet[1],&octet[2],&octet[3],&mask_) < 5) {
         printf("FATAL: Incorrectly formated entry\n");
-        exit(0);
+        fflush(stdin); // clear ENTER from output buffer on error
+        _exit(0);
     }
+    fflush(stdin); // clear ENTER from output buffer w/o error
 
     // kontrola vstupu
     if(mask_>32 || mask_ < 0) {
         printf("FATAL: Incorrectly input mask (over 32)\n");
-        exit(0);
+        _exit(0);
     }
     for(i=0;i<4;i++) {
         if(octet[i]>255 || octet[i] < 0) {
             printf("FATAL: Incorrectly input address (octet over 255)\n");
-            exit(0);
+            _exit(0);
         }
     }
 
@@ -83,16 +92,17 @@ int main() {
 
     // vypis
     printf("\nFor IP %d.%d.%d.%d with netmask %d is true:\n",octet[0],octet[1],octet[2],octet[3],mask_);
-    printf("> Long mask format (netmask):\t\t %d.%d.%d.%d\n",mask[0],mask[1],mask[2],mask[3]);
-    printf("> Inverse mask (wildcard):\t\t %d.%d.%d.%d\n",255-mask[0],255-mask[1],255-mask[2],255-mask[3]);
+    printf("> Long mask format (netmask):\t %d.%d.%d.%d\n",mask[0],mask[1],mask[2],mask[3]);
+    printf("> Inverse mask (wildcard):\t %d.%d.%d.%d\n",255-mask[0],255-mask[1],255-mask[2],255-mask[3]);
 
-    printf("> Network:\t\t %d.%d.%d.%d/%d\n",octet_n[0],octet_n[1],octet_n[2],octet_n[3]); // binarne suciny
+    printf("> Network:\t\t\t %d.%d.%d.%d/%d\n",octet_n[0],octet_n[1],octet_n[2],octet_n[3]); // binarne suciny
     printf("> Broadcast:\t\t\t %d.%d.%d.%d\n",octet_b[0],octet_b[1],octet_b[2],octet_b[3]); // binarne sucty s inverznou maskou
 
     printf("> Minimal usable address:\t %d.%d.%d.%d\n",octet_n[0],octet_n[1],octet_n[2],octet_n[3]+1); // cislo siete + 1
     printf("> Maximal usable address:\t %d.%d.%d.%d\n",octet_b[0],octet_b[1],octet_b[2],octet_b[3]-1); // broadcast siete - 1
 
-    printf("> No. of connectable devices:\t %lu",max);
+    printf("> No. of connectable devices:\t %lu\n",max);
 
+    _exit(0);
     return 0;
 }
